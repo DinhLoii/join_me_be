@@ -1,0 +1,56 @@
+package com.join.me.common.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.Instant;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@MappedSuperclass
+@SuperBuilder
+public abstract class BaseEntity implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    @Version
+    Long version;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    @CreatedBy
+    @Column(updatable = false)
+    String createdBy;
+
+    @LastModifiedBy
+    String updatedBy;
+
+    @CreatedDate
+    @Column(updatable = false)
+    Instant createdAt;
+
+    @LastModifiedDate
+    Instant updatedAt;
+}
