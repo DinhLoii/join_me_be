@@ -1,4 +1,4 @@
-package com.join.me.common.configs;
+package com.join.me.common.configs.auditing;
 
 import org.springframework.data.domain.AuditorAware;
 

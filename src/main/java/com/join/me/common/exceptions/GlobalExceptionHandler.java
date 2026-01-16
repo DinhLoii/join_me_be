@@ -1,6 +1,6 @@
 package com.join.me.common.exceptions;
 
-import com.join.me.common.constants.ApiConstants;
+import com.join.me.common.constants.ApiConstant;
 import com.join.me.common.dtos.ErrorMessage;
 import com.join.me.common.dtos.response.ApiResponse;
 import com.join.me.common.enums.ErrorCode;
@@ -17,7 +17,7 @@ public class GlobalExceptionHandler extends RuntimeException{
     @ExceptionHandler(value = RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException exception){
         ApiResponse<Object> response = ApiResponse.builder()
-                .success(ApiConstants.FAILURE)
+                .success(ApiConstant.FAILURE)
                 .errorMessage(ErrorMessage.builder()
                         .errorCode(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getCode())
                         .message(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getMessage())
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler extends RuntimeException{
     public ResponseEntity<ApiResponse<Object>> handlingAppException(AppException exception){
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Object> response = ApiResponse.builder()
-                .success(ApiConstants.FAILURE)
+                .success(ApiConstant.FAILURE)
                 .errorMessage(ErrorMessage.builder()
                         .errorCode(errorCode.getCode())
                         .message(errorCode.getMessage())
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler extends RuntimeException{
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse<Object>> handlingAccessDeniedException(AccessDeniedException exception) {
         ApiResponse<Object> response = ApiResponse.builder()
-                .success(ApiConstants.FAILURE)
+                .success(ApiConstant.FAILURE)
                 .errorMessage(ErrorMessage.builder()
                         .errorCode(ErrorCode.AUTHZ_UNAUTHORIZED.getCode())
                         .message(ErrorCode.AUTHZ_UNAUTHORIZED.getMessage())
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler extends RuntimeException{
         String enumKey = Objects.requireNonNull(exception.getFieldError()).getDefaultMessage();
         ErrorCode errorCode = ErrorCode.valueOf(enumKey);
         ApiResponse<Object> response = ApiResponse.builder()
-                .success(ApiConstants.FAILURE)
+                .success(ApiConstant.FAILURE)
                 .errorMessage(ErrorMessage.builder()
                         .errorCode(errorCode.getCode())
                         .message(errorCode.getMessage())
