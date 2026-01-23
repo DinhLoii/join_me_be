@@ -7,9 +7,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @SuperBuilder
@@ -40,10 +37,4 @@ public class Permission extends BaseEntity {
             columnDefinition = PermissionConstants.DESCRIPTION_DEFINITION
     )
     String description;
-
-    /**
-     * Permission ↔ Role (inverse side)
-     */
-    @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)
-    Set<Role> roles = new HashSet<>();
 }

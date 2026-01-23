@@ -2,7 +2,7 @@ package com.join.me.modules.user.entity;
 
 import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.user.constant.user.UserConstants;
-//import com.join.me.modules.user.enums.UserStatus; // Enums chưa làm
+// import com.join.me.modules.user.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,14 +39,18 @@ public class User extends BaseEntity {
     )
     String password;
 
+    // =========================
+    // STATUS (ENABLE WHEN ENUM READY)
+    // =========================
+    /*
     @Enumerated(EnumType.STRING)
     @Column(
             name = UserConstants.COL_STATUS,
             nullable = false,
             columnDefinition = UserConstants.STATUS_DEFINITION
     )
-
-//    UserStatus status; // Enums chưa làm
+    UserStatus status;
+    */
 
     // =========================
     // RELATIONSHIPS
