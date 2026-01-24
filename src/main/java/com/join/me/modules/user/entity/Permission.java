@@ -2,8 +2,14 @@ package com.join.me.modules.user.entity;
 
 import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.user.constant.permission.PermissionConstants;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
@@ -16,14 +22,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = PermissionConstants.TABLE_PERMISSION)
 public class Permission extends BaseEntity {
-
-    @Column(
-            name = PermissionConstants.COL_CODE,
-            nullable = false,
-            unique = true,
-            columnDefinition = PermissionConstants.CODE_DEFINITION
-    )
-    String code;
 
     @Column(
             name = PermissionConstants.COL_NAME,

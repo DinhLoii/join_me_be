@@ -2,8 +2,18 @@ package com.join.me.modules.user.entity;
 
 import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.user.constant.role.RoleConstants;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
@@ -19,14 +29,6 @@ import java.util.Set;
 @Entity
 @Table(name = RoleConstants.TABLE_ROLE)
 public class Role extends BaseEntity {
-
-    @Column(
-            name = RoleConstants.COL_CODE,
-            nullable = false,
-            unique = true,
-            columnDefinition = RoleConstants.CODE_DEFINITION
-    )
-    String code;
 
     @Column(
             name = RoleConstants.COL_NAME,
@@ -55,4 +57,3 @@ public class Role extends BaseEntity {
     )
     Set<Permission> permissions = new HashSet<>();
 }
-

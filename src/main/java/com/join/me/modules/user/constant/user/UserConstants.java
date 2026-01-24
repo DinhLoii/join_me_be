@@ -41,6 +41,6 @@ public final class UserConstants {
     // PREVENT INSTANTIATION
     // =========================
     private UserConstants() {
-        throw new UnsupportedOperationException("UserConstants should not be instantiated");
+
     }
 }

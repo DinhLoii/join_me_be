@@ -7,7 +7,6 @@ public final class RoleConstants {
     public static final String TABLE_ROLE_PERMISSION = "role_permissions";
 
     // ===== COLUMNS =====
-    public static final String COL_CODE = "code";
     public static final String COL_NAME = "name";
     public static final String COL_DESCRIPTION = "description";
 
@@ -15,12 +14,10 @@ public final class RoleConstants {
     public static final String COL_PERMISSION_ID = "permission_id";
 
     // ===== DEFINITIONS =====
-    public static final String CODE_DEFINITION = "VARCHAR(100)";
     public static final String NAME_DEFINITION = "VARCHAR(150)";
     public static final String DESCRIPTION_DEFINITION = "VARCHAR(255)";
 
     private RoleConstants() {
-        throw new UnsupportedOperationException("RoleConstants should not be instantiated");
+
     }
 }
-
