@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,9 +40,10 @@ public class Profile {
         @Column(name = ProfileConstants.COL_USER_ID, nullable = false, columnDefinition = ProfileConstants.USER_ID_DEFINITION)
         String userId;
 
-        @OneToOne(fetch = FetchType.LAZY, optional = false)
+        @OneToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = ProfileConstants.COL_USER_ID, referencedColumnName = "id")
         @MapsId
-        @JoinColumn(name = ProfileConstants.COL_USER_ID, nullable = false)
+        @NotNull(message = ProfileErrorCodeConstants.PROFILE_USER_REQUIRED)
         User user;
 
         @org.springframework.data.annotation.CreatedDate
