@@ -1,38 +1,34 @@
 package com.join.me.modules.user.entity;
 
 import com.join.me.common.entity.BaseEntity;
-import com.join.me.modules.user.constant.permission.PermissionConstants;
+import com.join.me.modules.user.constants.permission.PermissionConstants;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = PermissionConstants.TABLE_PERMISSION)
 public class Permission extends BaseEntity {
 
-    @Column(
-            name = PermissionConstants.COL_NAME,
+    @Column(name = PermissionConstants.COL_PERMISSION_NAME,
             nullable = false,
-            columnDefinition = PermissionConstants.NAME_DEFINITION
-    )
-    String name;
-
-    @Column(
-            name = PermissionConstants.COL_DESCRIPTION,
-            columnDefinition = PermissionConstants.DESCRIPTION_DEFINITION
-    )
-    String description;
+            unique = true,
+            columnDefinition = PermissionConstants.PERMISSION_NAME_DEFINITION)
+    @Size(min = PermissionConstants.MIN_CHARS_PERMISSION_NAME,
+            max = PermissionConstants.MAX_CHARS_PERMISSION_NAME)
+    String permissionName;
 }
