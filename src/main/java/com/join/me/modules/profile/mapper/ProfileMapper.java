@@ -14,13 +14,17 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ProfileMapper {
 
+    @Mapping(target = "userId", source = "id")
     @Mapping(target = "username", source = "user.username")
     @Mapping(target = "userRoles", expression = "java(mapRoles(profile.getUser().getRoles()))")
     @Mapping(target = "userStatus", ignore = true) // status not yet implemented in User entity
     ProfileResponse toProfileResponse(Profile profile);
 
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     void updateProfile(@MappingTarget Profile profile, UpdateProfileRequest request);
@@ -29,7 +33,7 @@ public interface ProfileMapper {
         if (roles == null)
             return null;
         return roles.stream()
-                .map(Role::getName)
+                .map(Role::getRoleName)
                 .collect(Collectors.toSet());
     }
 }

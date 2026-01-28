@@ -1,5 +1,6 @@
 package com.join.me.modules.profile.service.impl;
 
+import com.join.me.common.constants.GlobalVariableConstant;
 import com.join.me.common.constants.JwtClaimSetConstant;
 import com.join.me.common.dtos.request.PagingRequest;
 import com.join.me.common.dtos.response.PagingResponse;
@@ -26,8 +27,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -42,7 +41,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile createDefaultProfile(User user) {
         log.info("Creating default profile for user: {}", user.getUsername());
         Profile profile = Profile.builder()
-                .userId(user.getId())
+                .id(user.getId())
                 .user(user)
                 .fullName(user.getUsername())
                 .gender(GenderEnums.OTHER.name())
@@ -74,19 +73,22 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public PagingResponse<ProfileResponse> getAllProfiles(PagingRequest pagingRequest) {
-        Pageable pageable = getPageable(pagingRequest);
+        Pageable pageable = PageRequest.of(
+                Math.max(0, pagingRequest.getPage() - GlobalVariableConstant.PAGE_SIZE_INDEX),
+                pagingRequest.getPageSize() <= 0 ? 10 : pagingRequest.getPageSize(),
+                PagingUtil.createSort(pagingRequest));
+
         Page<Profile> profilePage = profileRepository.findAll(pageable);
 
-        List<ProfileResponse> content = profilePage.getContent().stream()
-                .map(profileMapper::toProfileResponse)
-                .toList();
-
         return PagingResponse.<ProfileResponse>builder()
-                .data(content)
-                .currentPage(profilePage.getNumber() + 1)
+                .currentPage(pagingRequest.getPage())
                 .pageSize(profilePage.getSize())
-                .totalElement(profilePage.getTotalElements())
                 .totalPages(profilePage.getTotalPages())
+                .totalElement(profilePage.getTotalElements())
+                .data(
+                        profilePage.getContent().stream()
+                                .map(profileMapper::toProfileResponse)
+                                .toList())
                 .build();
     }
 
@@ -116,12 +118,4 @@ public class ProfileServiceImpl implements ProfileService {
         return authentication.getName(); // Fallback to name (sub)
     }
 
-    private Pageable getPageable(PagingRequest request) {
-        if (request == null) {
-            return PageRequest.of(0, 10);
-        }
-        int page = Math.max(0, request.getPage() - 1);
-        int size = request.getPageSize() <= 0 ? 10 : request.getPageSize();
-        return PageRequest.of(page, size, PagingUtil.createSort(request));
-    }
 }
