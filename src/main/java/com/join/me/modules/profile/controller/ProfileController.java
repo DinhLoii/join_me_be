@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Tag(name = "Profile Management", description = "Profile management API")
 @RestController
 @RequestMapping("/api/v1/profiles")
@@ -81,10 +83,11 @@ public class ProfileController {
                 return ResponseEntity.ok(response);
         }
 
-        @PutMapping
+        @PutMapping("/me")
         @Operation(summary = "Update profile", description = "Update current user's profile information")
         public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
                         @Valid @RequestBody UpdateProfileRequest request) {
+                log.info("update my profile");
                 ApiResponse<ProfileResponse> response = ApiResponse
                                 .<ProfileResponse>builder()
                                 .success(ApiConstant.SUCCESS)

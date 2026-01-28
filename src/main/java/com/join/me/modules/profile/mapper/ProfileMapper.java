@@ -17,7 +17,7 @@ public interface ProfileMapper {
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "username", source = "user.username")
     @Mapping(target = "userRoles", source = "user.roles")
-    @Mapping(target = "userStatus", ignore = true)
+    @Mapping(target = "userStatus", source = "user.status")
     ProfileResponse toProfileResponse(Profile profile);
 
     @Mapping(target = "id", ignore = true)

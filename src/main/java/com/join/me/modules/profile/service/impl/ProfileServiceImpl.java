@@ -52,7 +52,6 @@ public class ProfileServiceImpl implements ProfileService {
         log.info("Creating default profile for user: {}", user.getUsername());
         profileRepository.save(Profile.builder()
                 .user(user)
-                .user(user)
                 .fullName(user.getUsername())
                 .gender(GenderEnums.OTHER)
                 .build());
@@ -146,7 +145,8 @@ public class ProfileServiceImpl implements ProfileService {
             profile.setSocialUrls(new ArrayList<>());
         }
 
-        List<PlatformLink> currentLinks = new ArrayList<>();
+        List<PlatformLink> links = profile.getSocialUrls();
+        links.clear();
 
         for (UpdatePlatformLinkRequest dto : socialUrls) {
             PlatformLink link = PlatformLink.builder()
@@ -154,7 +154,7 @@ public class ProfileServiceImpl implements ProfileService {
                     .link(dto.getLink())
                     .profile(profile)
                     .build();
-            currentLinks.add(link);
+            links.add(link);
         }
     }
 
