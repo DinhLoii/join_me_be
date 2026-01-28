@@ -21,51 +21,39 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = UserConstants.TABLE_USER)
 public class User extends BaseEntity {
 
-    @Column(name = UserConstants.COL_USERNAME,
-            nullable = false,
-            unique = true,
-            columnDefinition = UserConstants.USERNAME_DEFINITION)
-    @Size(min = UserConstants.MIN_CHARS_USERNAME,
-            max = UserConstants.MAX_CHARS_USERNAME)
-    String username;
+        @Column(name = UserConstants.COL_USERNAME, nullable = false, unique = true, columnDefinition = UserConstants.USERNAME_DEFINITION)
+        @Size(min = UserConstants.MIN_CHARS_USERNAME, max = UserConstants.MAX_CHARS_USERNAME)
+        String username;
 
-    @Column(name = UserConstants.COL_PASSWORD,
-            nullable = false,
-            columnDefinition = UserConstants.PASSWORD_DEFINITION)
-    @Size(min = UserConstants.MIN_CHARS_PASSWORD,
-            max = UserConstants.MAX_CHARS_PASSWORD)
-    String password;
+        @Column(name = UserConstants.COL_PASSWORD, nullable = false, columnDefinition = UserConstants.PASSWORD_DEFINITION)
+        @Size(min = UserConstants.MIN_CHARS_PASSWORD, max = UserConstants.MAX_CHARS_PASSWORD)
+        String password;
 
-    @Column(name = UserConstants.COL_EMAIL,
-            nullable = false,
-            unique = true,
-            columnDefinition = UserConstants.EMAIL_DEFINITION)
-    @Email
-    String email;
+        @Column(name = UserConstants.COL_EMAIL, nullable = false, unique = true, columnDefinition = UserConstants.EMAIL_DEFINITION)
+        @Email
+        String email;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = UserConstants.COL_STATUS,
-            nullable = false)
-    UserStatus status;
+        @Enumerated(EnumType.STRING)
+        @Column(name = UserConstants.COL_STATUS, nullable = false)
+        UserStatus status;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    Set<Role> roles;
+        @ManyToMany(fetch = FetchType.LAZY)
+        @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+        @Builder.Default
+        Set<Role> roles = new HashSet<>();
 }

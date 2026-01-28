@@ -41,7 +41,7 @@ public class ProfileServiceImpl implements ProfileService {
     public Profile createDefaultProfile(User user) {
         log.info("Creating default profile for user: {}", user.getUsername());
         Profile profile = Profile.builder()
-                .userId(user.getId())
+                .id(user.getId())
                 .user(user)
                 .fullName(user.getUsername())
                 .gender(GenderEnums.OTHER.name())

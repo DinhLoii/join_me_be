@@ -17,35 +17,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = RoleConstants.TABLE_ROLE)
 public class Role extends BaseEntity {
 
-    @Column(name = RoleConstants.COL_ROLE_NAME,
-            nullable = false,
-            unique = true,
-            columnDefinition = RoleConstants.ROLE_NAME_DEFINITION)
-    @Size(min = RoleConstants.MIN_CHARS_ROLE_NAME,
-            max = RoleConstants.MAX_CHARS_ROLE_NAME)
-    String roleName;
+        @Column(name = RoleConstants.COL_ROLE_NAME, nullable = false, unique = true, columnDefinition = RoleConstants.ROLE_NAME_DEFINITION)
+        @Size(min = RoleConstants.MIN_CHARS_ROLE_NAME, max = RoleConstants.MAX_CHARS_ROLE_NAME)
+        String roleName;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    Set<User> users;
+        @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+        Set<User> users;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "role_permissions",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
-    )
-    Set<Permission> permissions;
+        @ManyToMany(fetch = FetchType.LAZY)
+        @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+        @Builder.Default
+        Set<Permission> permissions = new HashSet<>();
 }

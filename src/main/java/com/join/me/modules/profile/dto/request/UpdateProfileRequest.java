@@ -54,4 +54,10 @@ public class UpdateProfileRequest {
 
         @NotNull(message = ProfileErrorCodeConstants.PROFILE_GENDER_INVALID)
         GenderEnums gender;
+
+        @Size(max = ProfileConstants.EDUCATION_LEVEL_MAX_LENGTH, message = ProfileErrorCodeConstants.PROFILE_EDUCATION_LEVEL_SIZE_INVALID)
+        String educationLevel;
+
+        @Size(max = ProfileConstants.HOBBIES_MAX_LENGTH, message = ProfileErrorCodeConstants.PROFILE_HOBBIES_SIZE_INVALID)
+        String hobbies;
 }

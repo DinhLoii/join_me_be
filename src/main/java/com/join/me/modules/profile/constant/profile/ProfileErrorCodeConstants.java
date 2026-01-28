@@ -15,6 +15,8 @@ public final class ProfileErrorCodeConstants {
     public static final String PROFILE_RELATIONSHIP_STATUS_INVALID = "PROFILE_RELATIONSHIP_STATUS_INVALID";
     public static final String PROFILE_BACKGROUND_URL_SIZE_INVALID = "PROFILE_BACKGROUND_URL_SIZE_INVALID";
     public static final String PROFILE_USER_REQUIRED = "PROFILE_USER_REQUIRED";
+    public static final String PROFILE_EDUCATION_LEVEL_SIZE_INVALID = "PROFILE_EDUCATION_LEVEL_SIZE_INVALID";
+    public static final String PROFILE_HOBBIES_SIZE_INVALID = "PROFILE_HOBBIES_SIZE_INVALID";
 
     // =========================
     // BUSINESS LOGIC ERRORS

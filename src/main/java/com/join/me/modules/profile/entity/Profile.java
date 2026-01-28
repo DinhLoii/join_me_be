@@ -1,11 +1,12 @@
 package com.join.me.modules.profile.entity;
 
+import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.profile.constant.profile.ProfileConstants;
+import com.join.me.modules.profile.constant.profile.ProfileErrorCodeConstants;
 import com.join.me.modules.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
@@ -30,28 +31,13 @@ import java.time.LocalDate;
 @Entity
 @Table(name = ProfileConstants.TABLE_PROFILE)
 @jakarta.persistence.EntityListeners(org.springframework.data.jpa.domain.support.AuditingEntityListener.class)
-public class Profile {
-
-        /**
-         * Shared Primary Key:
-         * profiles.user_id = users.id
-         */
-        @Id
-        @Column(name = ProfileConstants.COL_USER_ID, nullable = false, columnDefinition = ProfileConstants.USER_ID_DEFINITION)
-        String userId;
+public class Profile extends BaseEntity {
 
         @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = ProfileConstants.COL_USER_ID, referencedColumnName = "id")
         @MapsId
         @NotNull(message = ProfileErrorCodeConstants.PROFILE_USER_REQUIRED)
         User user;
-
-        @org.springframework.data.annotation.CreatedDate
-        @Column(updatable = false)
-        java.time.Instant createdAt;
-
-        @org.springframework.data.annotation.LastModifiedDate
-        java.time.Instant updatedAt;
 
         // =========================
         // PROFILE FIELDS
@@ -86,4 +72,14 @@ public class Profile {
 
         @Column(name = ProfileConstants.COL_GENDER, columnDefinition = ProfileConstants.GENDER_DEFINITION)
         String gender;
+
+        @Column(name = ProfileConstants.COL_EDUCATION_LEVEL, columnDefinition = ProfileConstants.EDUCATION_LEVEL_DEFINITION)
+        String educationLevel;
+
+        /**
+         * hobbies[] in ERD
+         * Mapped as TEXT/JSON
+         */
+        @Column(name = ProfileConstants.COL_HOBBIES, columnDefinition = ProfileConstants.HOBBIES_DEFINITION)
+        String hobbies;
 }

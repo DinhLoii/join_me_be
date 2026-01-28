@@ -43,6 +43,8 @@ public class ProfileResponse {
     String relationshipStatus;
     String backgroundUrl;
     GenderEnums gender;
+    String educationLevel;
+    String hobbies;
 
     // =========================
     // USER INFORMATION
