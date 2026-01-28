@@ -26,6 +26,12 @@ public enum ErrorCode {
     ROLE_NOT_FOUND("ROLE_1000", "Role not found", HttpStatus.NOT_FOUND),
     ROLE_NAME_EXISTED("ROLE_1001", "Role name existed", HttpStatus.BAD_REQUEST),
 
+    // ==== UNIVERSITY ERRORS ====
+    UNIVERSITY_NOT_FOUND("UNIV_1000", "University not found", HttpStatus.NOT_FOUND),
+
+    // ==== PROFILE ERRORS ====
+    PROFILE_NOT_FOUND("PROFILE_1000", "Profile not found", HttpStatus.NOT_FOUND),
+
     // ==== PERMISSION ERRORS ====
     PERMISSION_NOT_FOUND("PERM_1000", "Permission not found", HttpStatus.NOT_FOUND),
 

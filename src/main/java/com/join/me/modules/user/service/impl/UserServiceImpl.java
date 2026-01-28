@@ -7,6 +7,7 @@ import com.join.me.common.enums.ErrorCode;
 import com.join.me.common.exceptions.AppException;
 import com.join.me.common.utils.PagingUtil;
 import com.join.me.modules.auth.utils.AuthUtils;
+import com.join.me.modules.profile.service.api.ProfileService;
 import com.join.me.modules.user.dto.request.UserCreationRequest;
 import com.join.me.modules.user.dto.request.UserRolesUpdateRequest;
 import com.join.me.modules.user.dto.response.UserResponse;
@@ -42,6 +43,7 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    ProfileService profileService;
 
     @Override
     @Transactional
@@ -54,8 +56,11 @@ public class UserServiceImpl implements UserService {
         Role userRole = roleRepository.findByRoleName(PredefinedRole.USER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         user.setRoles(new HashSet<>(Set.of(userRole)));
-        
-        return userMapper.toUserResponse(usersRepository.save(user));
+
+        User userSaved = usersRepository.save(user);
+        profileService.createDefaultProfile(userSaved);
+
+        return userMapper.toUserResponse(userSaved);
     }
 
     @Override

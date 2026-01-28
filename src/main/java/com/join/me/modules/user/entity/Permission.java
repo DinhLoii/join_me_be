@@ -23,8 +23,11 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = PermissionConstants.TABLE_PERMISSION)
 public class Permission extends BaseEntity {
-
-        @Column(name = PermissionConstants.COL_PERMISSION_NAME, nullable = false, unique = true, columnDefinition = PermissionConstants.PERMISSION_NAME_DEFINITION)
-        @Size(min = PermissionConstants.MIN_CHARS_PERMISSION_NAME, max = PermissionConstants.MAX_CHARS_PERMISSION_NAME)
-        String permissionName;
+    @Column(name = PermissionConstants.COL_PERMISSION_NAME,
+            nullable = false,
+            unique = true,
+            columnDefinition = PermissionConstants.PERMISSION_NAME_DEFINITION)
+    @Size(min = PermissionConstants.MIN_CHARS_PERMISSION_NAME,
+            max = PermissionConstants.MAX_CHARS_PERMISSION_NAME)
+    String permissionName;
 }

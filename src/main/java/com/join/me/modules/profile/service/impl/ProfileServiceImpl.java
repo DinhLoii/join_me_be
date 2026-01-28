@@ -1,18 +1,25 @@
 package com.join.me.modules.profile.service.impl;
 
 import com.join.me.common.constants.GlobalVariableConstant;
-import com.join.me.common.constants.JwtClaimSetConstant;
 import com.join.me.common.dtos.request.PagingRequest;
 import com.join.me.common.dtos.response.PagingResponse;
 import com.join.me.common.enums.ErrorCode;
 import com.join.me.common.exceptions.AppException;
 import com.join.me.common.utils.PagingUtil;
+import com.join.me.modules.auth.utils.AuthUtils;
+import com.join.me.modules.profile.dto.request.UpdateAddressRequest;
+import com.join.me.modules.profile.dto.request.UpdatePlatformLinkRequest;
 import com.join.me.modules.profile.dto.request.UpdateProfileRequest;
 import com.join.me.modules.profile.dto.response.ProfileResponse;
+import com.join.me.modules.profile.entity.Address;
+import com.join.me.modules.profile.entity.PlatformLink;
 import com.join.me.modules.profile.entity.Profile;
+import com.join.me.modules.profile.entity.University;
 import com.join.me.modules.profile.enums.GenderEnums;
 import com.join.me.modules.profile.mapper.ProfileMapper;
+import com.join.me.modules.profile.repository.AddressRepository;
 import com.join.me.modules.profile.repository.ProfileRepository;
+import com.join.me.modules.profile.repository.UniversityRepository;
 import com.join.me.modules.profile.service.api.ProfileService;
 import com.join.me.modules.user.entity.User;
 import lombok.AccessLevel;
@@ -22,10 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,47 +43,54 @@ public class ProfileServiceImpl implements ProfileService {
 
     ProfileRepository profileRepository;
     ProfileMapper profileMapper;
+    AddressRepository addressRepository;
+    UniversityRepository universityRepository;
 
     @Override
     @Transactional
-    public Profile createDefaultProfile(User user) {
+    public void createDefaultProfile(User user) {
         log.info("Creating default profile for user: {}", user.getUsername());
-        Profile profile = Profile.builder()
-                .id(user.getId())
+        profileRepository.save(Profile.builder()
+                .user(user)
                 .user(user)
                 .fullName(user.getUsername())
-                .gender(GenderEnums.OTHER.name())
-                .build();
-        return profileRepository.save(profile);
+                .gender(GenderEnums.OTHER)
+                .build());
     }
 
     @Override
     @Transactional
     public ProfileResponse updateProfile(UpdateProfileRequest request) {
-        String currentUserId = getCurrentUserId();
-        Profile profile = profileRepository.findById(currentUserId)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION)); // TODO: Add
-                                                                                                // PROFILE_NOT_FOUND to
-                                                                                                // common.ErrorCode
+        String currentUserId = AuthUtils.getCurrentUserId();
 
+        Profile profile = profileRepository.findById(currentUserId)
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
+
+        // Update primitive/simple fields via mapper
         profileMapper.updateProfile(profile, request);
-        return profileMapper.toProfileResponse(profileRepository.save(profile));
+
+        // Update complex relations
+        updateAddress(profile, request.getAddress());
+        updateSocialUrls(profile, request.getSocialUrls());
+        updateUniversity(profile, request.getUniversityId());
+        updateHobbies(profile, request.getHobbies());
+
+        Profile saved = profileRepository.save(profile);
+        return profileMapper.toProfileResponse(saved);
     }
 
     @Override
     public ProfileResponse getProfileByUserId(String userId) {
         Profile profile = profileRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION)); // TODO: Add
-                                                                                                // PROFILE_NOT_FOUND to
-                                                                                                // common.ErrorCode
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
         return profileMapper.toProfileResponse(profile);
     }
 
     @Override
     public PagingResponse<ProfileResponse> getAllProfiles(PagingRequest pagingRequest) {
         Pageable pageable = PageRequest.of(
-                Math.max(0, pagingRequest.getPage() - GlobalVariableConstant.PAGE_SIZE_INDEX),
-                pagingRequest.getPageSize() <= 0 ? 10 : pagingRequest.getPageSize(),
+                pagingRequest.getPage() - GlobalVariableConstant.PAGE_SIZE_INDEX,
+                pagingRequest.getPageSize(),
                 PagingUtil.createSort(pagingRequest));
 
         Page<Profile> profilePage = profileRepository.findAll(pageable);
@@ -94,28 +109,73 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public ProfileResponse getMyProfile() {
-        String currentUserId = getCurrentUserId();
+        String currentUserId = AuthUtils.getCurrentUserId();
         Profile profile = profileRepository.findById(currentUserId)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION)); // TODO: Add
-                                                                                                // PROFILE_NOT_FOUND to
-                                                                                                // common.ErrorCode
+                .orElseThrow(() -> new AppException(ErrorCode.PROFILE_NOT_FOUND));
+
         return profileMapper.toProfileResponse(profile);
     }
 
-    private String getCurrentUserId() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.AUTH_UNAUTHENTICATED);
+    private void updateAddress(Profile profile, UpdateAddressRequest addressRequest) {
+        if (addressRequest == null) {
+            return;
         }
 
-        if (authentication instanceof JwtAuthenticationToken jwtToken) {
-            Object userIdClaim = jwtToken.getToken().getClaim(JwtClaimSetConstant.CLAIM_USER_ID);
-            if (userIdClaim != null) {
-                return userIdClaim.toString();
-            }
+        Address currentAddress = profile.getAddress();
+        if (currentAddress == null) {
+            Address newAddress = Address.builder()
+                    .province(addressRequest.getProvince())
+                    .commune(addressRequest.getCommune())
+                    .profile(profile)
+                    .build();
+
+            Address savedAddress = addressRepository.save(newAddress);
+            profile.setAddress(savedAddress);
+        } else {
+            currentAddress.setProvince(addressRequest.getProvince());
+            currentAddress.setCommune(addressRequest.getCommune());
+        }
+    }
+
+    private void updateSocialUrls(Profile profile, List<UpdatePlatformLinkRequest> socialUrls) {
+        if (socialUrls == null) {
+            return;
         }
 
-        return authentication.getName(); // Fallback to name (sub)
+        if (profile.getSocialUrls() == null) {
+            profile.setSocialUrls(new ArrayList<>());
+        }
+
+        List<PlatformLink> currentLinks = new ArrayList<>();
+
+        for (UpdatePlatformLinkRequest dto : socialUrls) {
+            PlatformLink link = PlatformLink.builder()
+                    .platform(dto.getPlatform())
+                    .link(dto.getLink())
+                    .profile(profile)
+                    .build();
+            currentLinks.add(link);
+        }
+    }
+
+    private void updateUniversity(Profile profile, String universityId) {
+        if (universityId == null) {
+            return;
+        }
+        if (universityId.isBlank()) {
+            profile.setUniversity(null);
+            return;
+        }
+        University university = universityRepository.findById(universityId)
+                .orElseThrow(() -> new AppException(ErrorCode.UNIVERSITY_NOT_FOUND));
+        profile.setUniversity(university);
+    }
+
+    private void updateHobbies(Profile profile, List<String> hobbies) {
+        if (hobbies == null) {
+            return;
+        }
+        profile.setHobbies(new ArrayList<>(hobbies));
     }
 
 }

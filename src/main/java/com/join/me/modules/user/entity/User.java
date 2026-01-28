@@ -36,15 +36,25 @@ import java.util.Set;
 @Table(name = UserConstants.TABLE_USER)
 public class User extends BaseEntity {
 
-        @Column(name = UserConstants.COL_USERNAME, nullable = false, unique = true, columnDefinition = UserConstants.USERNAME_DEFINITION)
-        @Size(min = UserConstants.MIN_CHARS_USERNAME, max = UserConstants.MAX_CHARS_USERNAME)
+        @Column(name = UserConstants.COL_USERNAME,
+                nullable = false,
+                unique = true,
+                columnDefinition = UserConstants.USERNAME_DEFINITION)
+        @Size(min = UserConstants.MIN_CHARS_USERNAME,
+                max = UserConstants.MAX_CHARS_USERNAME)
         String username;
 
-        @Column(name = UserConstants.COL_PASSWORD, nullable = false, columnDefinition = UserConstants.PASSWORD_DEFINITION)
-        @Size(min = UserConstants.MIN_CHARS_PASSWORD, max = UserConstants.MAX_CHARS_PASSWORD)
+        @Column(name = UserConstants.COL_PASSWORD,
+                nullable = false,
+                columnDefinition = UserConstants.PASSWORD_DEFINITION)
+        @Size(min = UserConstants.MIN_CHARS_PASSWORD,
+                max = UserConstants.MAX_CHARS_PASSWORD)
         String password;
 
-        @Column(name = UserConstants.COL_EMAIL, nullable = false, unique = true, columnDefinition = UserConstants.EMAIL_DEFINITION)
+        @Column(name = UserConstants.COL_EMAIL,
+                nullable = false,
+                unique = true,
+                columnDefinition = UserConstants.EMAIL_DEFINITION)
         @Email
         String email;
 
@@ -53,7 +63,8 @@ public class User extends BaseEntity {
         UserStatus status;
 
         @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-        @Builder.Default
-        Set<Role> roles = new HashSet<>();
+        @JoinTable(name = "user_roles",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id"))
+        Set<Role> roles;
 }

@@ -11,17 +11,21 @@ import org.mapstruct.MappingTarget;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AddressMapper.class, PlatformLinkMapper.class, UniversityMapper.class})
 public interface ProfileMapper {
 
     @Mapping(target = "userId", source = "id")
     @Mapping(target = "username", source = "user.username")
-    @Mapping(target = "userRoles", expression = "java(mapRoles(profile.getUser().getRoles()))")
-    @Mapping(target = "userStatus", ignore = true) // status not yet implemented in User entity
+    @Mapping(target = "userRoles", source = "user.roles")
+    @Mapping(target = "userStatus", ignore = true)
     ProfileResponse toProfileResponse(Profile profile);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "socialUrls", ignore = true)
+    @Mapping(target = "university", ignore = true)
+    @Mapping(target = "hobbies", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)

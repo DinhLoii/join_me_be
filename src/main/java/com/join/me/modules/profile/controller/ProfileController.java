@@ -4,14 +4,13 @@ import com.join.me.common.constants.ApiConstant;
 import com.join.me.common.constants.PaginationConstant;
 import com.join.me.common.dtos.request.PagingRequest;
 import com.join.me.common.dtos.request.SortRequest;
+import com.join.me.common.dtos.response.ApiResponse;
 import com.join.me.common.dtos.response.PagingResponse;
 import com.join.me.modules.profile.constant.profile.ProfileControllerConstants;
 import com.join.me.modules.profile.dto.request.UpdateProfileRequest;
 import com.join.me.modules.profile.dto.response.ProfileResponse;
 import com.join.me.modules.profile.service.api.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -37,12 +36,7 @@ public class ProfileController {
 
         @GetMapping
         @Operation(summary = "Get all profiles", description = "Get list of all profiles with pagination")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = ProfileControllerConstants.GET_ALL_SUCCESS),
-                        @ApiResponse(responseCode = "400", description = ProfileControllerConstants.BAD_REQUEST),
-                        @ApiResponse(responseCode = "500", description = ProfileControllerConstants.INTERNAL_ERROR)
-        })
-        public ResponseEntity<com.join.me.common.dtos.response.ApiResponse<PagingResponse<ProfileResponse>>> getAllProfiles(
+        public ResponseEntity<ApiResponse<PagingResponse<ProfileResponse>>> getAllProfiles(
                         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                         @RequestParam(required = false, defaultValue = "createdAt") String field,
@@ -53,7 +47,7 @@ public class ProfileController {
                                 .sortRequest(new SortRequest(direction, field))
                                 .build();
 
-                com.join.me.common.dtos.response.ApiResponse<PagingResponse<ProfileResponse>> response = com.join.me.common.dtos.response.ApiResponse
+                ApiResponse<PagingResponse<ProfileResponse>> response = ApiResponse
                                 .<PagingResponse<ProfileResponse>>builder()
                                 .success(ApiConstant.SUCCESS)
                                 .data(profileService.getAllProfiles(pagingRequest))
@@ -64,13 +58,8 @@ public class ProfileController {
 
         @GetMapping("/me")
         @Operation(summary = "Get my profile", description = "Get current user's profile information")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = ProfileControllerConstants.GET_MY_PROFILE_SUCCESS),
-                        @ApiResponse(responseCode = "401", description = ProfileControllerConstants.UNAUTHORIZED),
-                        @ApiResponse(responseCode = "500", description = ProfileControllerConstants.INTERNAL_ERROR)
-        })
-        public ResponseEntity<com.join.me.common.dtos.response.ApiResponse<ProfileResponse>> getMyProfile() {
-                com.join.me.common.dtos.response.ApiResponse<ProfileResponse> response = com.join.me.common.dtos.response.ApiResponse
+        public ResponseEntity<ApiResponse<ProfileResponse>> getMyProfile() {
+                ApiResponse<ProfileResponse> response = ApiResponse
                                 .<ProfileResponse>builder()
                                 .success(ApiConstant.SUCCESS)
                                 .data(profileService.getMyProfile())
@@ -81,14 +70,9 @@ public class ProfileController {
 
         @GetMapping("/{userId}")
         @Operation(summary = "Get profile by ID", description = "Get profile details by user ID")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = ProfileControllerConstants.GET_BY_ID_SUCCESS),
-                        @ApiResponse(responseCode = "404", description = ProfileControllerConstants.NOT_FOUND),
-                        @ApiResponse(responseCode = "500", description = ProfileControllerConstants.INTERNAL_ERROR)
-        })
-        public ResponseEntity<com.join.me.common.dtos.response.ApiResponse<ProfileResponse>> getProfileById(
+        public ResponseEntity<ApiResponse<ProfileResponse>> getProfileById(
                         @PathVariable String userId) {
-                com.join.me.common.dtos.response.ApiResponse<ProfileResponse> response = com.join.me.common.dtos.response.ApiResponse
+                ApiResponse<ProfileResponse> response = ApiResponse
                                 .<ProfileResponse>builder()
                                 .success(ApiConstant.SUCCESS)
                                 .data(profileService.getProfileByUserId(userId))
@@ -99,15 +83,9 @@ public class ProfileController {
 
         @PutMapping
         @Operation(summary = "Update profile", description = "Update current user's profile information")
-        @ApiResponses(value = {
-                        @ApiResponse(responseCode = "200", description = ProfileControllerConstants.UPDATE_PROFILE_SUCCESS),
-                        @ApiResponse(responseCode = "400", description = ProfileControllerConstants.BAD_REQUEST),
-                        @ApiResponse(responseCode = "401", description = ProfileControllerConstants.UNAUTHORIZED),
-                        @ApiResponse(responseCode = "500", description = ProfileControllerConstants.INTERNAL_ERROR)
-        })
-        public ResponseEntity<com.join.me.common.dtos.response.ApiResponse<ProfileResponse>> updateProfile(
+        public ResponseEntity<ApiResponse<ProfileResponse>> updateProfile(
                         @Valid @RequestBody UpdateProfileRequest request) {
-                com.join.me.common.dtos.response.ApiResponse<ProfileResponse> response = com.join.me.common.dtos.response.ApiResponse
+                ApiResponse<ProfileResponse> response = ApiResponse
                                 .<ProfileResponse>builder()
                                 .success(ApiConstant.SUCCESS)
                                 .data(profileService.updateProfile(request))

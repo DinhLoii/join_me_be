@@ -1,5 +1,6 @@
 package com.join.me.modules.user.dto.response;
 
+import com.join.me.modules.user.entity.Permission;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,5 +20,5 @@ import java.util.Set;
 public class RoleResponse {
     String id;
     String roleName;
-    Set<String> permissions;
+    Set<Permission> permissions;
 }

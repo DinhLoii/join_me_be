@@ -14,13 +14,11 @@ public final class ProfileConstants {
     public static final String COL_FULL_NAME = "full_name";
     public static final String COL_AVATAR_URL = "avatar_url";
     public static final String COL_BIO = "bio";
-    public static final String COL_ADDRESS = "address";
-    public static final String COL_SOCIAL_URLS = "social_url"; // ERD: social_url[]
     public static final String COL_DOB = "dob";
     public static final String COL_RELATIONSHIP_STATUS = "relationship_status";
     public static final String COL_BACKGROUND_URL = "background_url";
     public static final String COL_GENDER = "gender";
-    public static final String COL_EDUCATION_LEVEL = "education_level";
+    public static final String COL_UNIVERSITY_ID = "university_id";
     public static final String COL_HOBBIES = "hobbies"; // ERD: hobbies[]
 
     // =========================

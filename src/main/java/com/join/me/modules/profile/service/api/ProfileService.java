@@ -15,7 +15,7 @@ public interface ProfileService {
      *
      * @author join.me
      */
-    Profile createDefaultProfile(User user);
+    void createDefaultProfile(User user);
 
     /**
      * Update current user's profile

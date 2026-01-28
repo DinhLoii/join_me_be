@@ -1,6 +1,7 @@
 package com.join.me.modules.profile.dto.response;
 
 import com.join.me.modules.profile.enums.GenderEnums;
+import com.join.me.modules.profile.enums.RelationshipStatus;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,12 +12,9 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Profile response DTO
- * Used for get / update profile APIs
- */
 @Getter
 @Setter
 @Builder
@@ -24,36 +22,21 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProfileResponse {
-
-    // =========================
-    // PROFILE INFORMATION
-    // =========================
     String userId;
-
     Instant createdAt;
     Instant updatedAt;
-
     String fullName;
     String avatarUrl;
     String bio;
-    String address;
-    String socialUrls;
-
+    AddressResponse address;
+    List<PlatformLinkResponse> socialUrls;
     LocalDate dob;
-    String relationshipStatus;
+    RelationshipStatus relationshipStatus;
     String backgroundUrl;
     GenderEnums gender;
-    String educationLevel;
-    String hobbies;
-
-    // =========================
-    // USER INFORMATION
-    // =========================
+    UniversityResponse university;
+    List<String> hobbies;
     String username;
     String userStatus;
-
-    /**
-     * Roles of user (e.g. USER, ADMIN)
-     */
     Set<String> userRoles;
 }

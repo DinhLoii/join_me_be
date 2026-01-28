@@ -32,15 +32,13 @@ import java.util.Set;
 @Table(name = RoleConstants.TABLE_ROLE)
 public class Role extends BaseEntity {
 
-        @Column(name = RoleConstants.COL_ROLE_NAME, nullable = false, unique = true, columnDefinition = RoleConstants.ROLE_NAME_DEFINITION)
-        @Size(min = RoleConstants.MIN_CHARS_ROLE_NAME, max = RoleConstants.MAX_CHARS_ROLE_NAME)
+        @Column(name = RoleConstants.COL_ROLE_NAME,
+                nullable = false, unique = true,
+                columnDefinition = RoleConstants.ROLE_NAME_DEFINITION)
+        @Size(min = RoleConstants.MIN_CHARS_ROLE_NAME,
+                max = RoleConstants.MAX_CHARS_ROLE_NAME)
         String roleName;
 
-        @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-        Set<User> users;
-
         @ManyToMany(fetch = FetchType.LAZY)
-        @JoinTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
-        @Builder.Default
-        Set<Permission> permissions = new HashSet<>();
+        Set<Permission> permissions;
 }

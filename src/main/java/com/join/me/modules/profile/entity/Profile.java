@@ -1,85 +1,105 @@
 package com.join.me.modules.profile.entity;
 
+import com.join.me.common.constants.BaseFieldConstants;
 import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.profile.constant.profile.ProfileConstants;
 import com.join.me.modules.profile.constant.profile.ProfileErrorCodeConstants;
+import com.join.me.modules.profile.enums.GenderEnums;
+import com.join.me.modules.profile.enums.RelationshipStatus;
 import com.join.me.modules.user.entity.User;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = ProfileConstants.TABLE_PROFILE)
-@jakarta.persistence.EntityListeners(org.springframework.data.jpa.domain.support.AuditingEntityListener.class)
 public class Profile extends BaseEntity {
 
-        @OneToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = ProfileConstants.COL_USER_ID, referencedColumnName = "id")
-        @MapsId
-        @NotNull(message = ProfileErrorCodeConstants.PROFILE_USER_REQUIRED)
-        User user;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = ProfileConstants.COL_USER_ID,
+            referencedColumnName = BaseFieldConstants.ID)
+    @MapsId
+    @NotNull(message = ProfileErrorCodeConstants.PROFILE_USER_REQUIRED)
+    User user;
 
-        // =========================
-        // PROFILE FIELDS
-        // =========================
-        @Column(name = ProfileConstants.COL_FULL_NAME, columnDefinition = ProfileConstants.FULL_NAME_DEFINITION)
-        String fullName;
+    @Column(name = ProfileConstants.COL_FULL_NAME,
+            columnDefinition = ProfileConstants.FULL_NAME_DEFINITION)
+    String fullName;
 
-        @Column(name = ProfileConstants.COL_AVATAR_URL, columnDefinition = ProfileConstants.AVATAR_URL_DEFINITION)
-        String avatarUrl;
+    @Column(name = ProfileConstants.COL_AVATAR_URL,
+            columnDefinition = ProfileConstants.AVATAR_URL_DEFINITION)
+    String avatarUrl;
 
-        @Column(name = ProfileConstants.COL_BIO, columnDefinition = ProfileConstants.BIO_DEFINITION)
-        String bio;
+    @Column(name = ProfileConstants.COL_BIO,
+            columnDefinition = ProfileConstants.BIO_DEFINITION)
+    String bio;
 
-        @Column(name = ProfileConstants.COL_ADDRESS, columnDefinition = ProfileConstants.ADDRESS_DEFINITION)
-        String address;
+    @OneToOne(mappedBy = "profile")
+    Address address;
 
-        /**
-         * social_url[] trong ERD
-         * Map dạng TEXT (JSON/CSV) để giữ đúng 1 cột như ERD.
-         */
-        @Column(name = ProfileConstants.COL_SOCIAL_URLS, columnDefinition = ProfileConstants.SOCIAL_URLS_DEFINITION)
-        String socialUrls;
+    @OneToMany(
+            mappedBy = "profile",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    List<PlatformLink> socialUrls;
 
-        @Column(name = ProfileConstants.COL_DOB, columnDefinition = ProfileConstants.DOB_DEFINITION)
-        LocalDate dob;
+    @Column(name = ProfileConstants.COL_DOB,
+            columnDefinition = ProfileConstants.DOB_DEFINITION)
+    LocalDate dob;
 
-        @Column(name = ProfileConstants.COL_RELATIONSHIP_STATUS, columnDefinition = ProfileConstants.RELATIONSHIP_STATUS_DEFINITION)
-        String relationshipStatus;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = ProfileConstants.COL_RELATIONSHIP_STATUS,
+            columnDefinition = ProfileConstants.RELATIONSHIP_STATUS_DEFINITION)
+    RelationshipStatus relationshipStatus;
 
-        @Column(name = ProfileConstants.COL_BACKGROUND_URL, columnDefinition = ProfileConstants.BACKGROUND_URL_DEFINITION)
-        String backgroundUrl;
+    @Column(name = ProfileConstants.COL_BACKGROUND_URL,
+            columnDefinition = ProfileConstants.BACKGROUND_URL_DEFINITION)
+    String backgroundUrl;
 
-        @Column(name = ProfileConstants.COL_GENDER, columnDefinition = ProfileConstants.GENDER_DEFINITION)
-        String gender;
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = ProfileConstants.COL_GENDER,
+            columnDefinition = ProfileConstants.GENDER_DEFINITION)
+    GenderEnums gender;
 
-        @Column(name = ProfileConstants.COL_EDUCATION_LEVEL, columnDefinition = ProfileConstants.EDUCATION_LEVEL_DEFINITION)
-        String educationLevel;
+    @ManyToOne
+    @JoinColumn(name = ProfileConstants.COL_UNIVERSITY_ID,
+            referencedColumnName = BaseFieldConstants.ID)
+    University university;
 
-        /**
-         * hobbies[] in ERD
-         * Mapped as TEXT/JSON
-         */
-        @Column(name = ProfileConstants.COL_HOBBIES, columnDefinition = ProfileConstants.HOBBIES_DEFINITION)
-        String hobbies;
+    @ElementCollection
+    @CollectionTable(
+            name = "hobbies",
+            joinColumns = @JoinColumn(name = ProfileConstants.COL_USER_ID)
+    )
+    @Column(name = ProfileConstants.COL_HOBBIES)
+    List<String> hobbies;
 }
