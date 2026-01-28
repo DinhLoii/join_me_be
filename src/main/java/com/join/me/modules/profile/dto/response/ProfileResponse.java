@@ -26,6 +26,7 @@ public class ProfileResponse {
     Instant createdAt;
     Instant updatedAt;
     String fullName;
+    String email;
     String avatarUrl;
     String bio;
     AddressResponse address;

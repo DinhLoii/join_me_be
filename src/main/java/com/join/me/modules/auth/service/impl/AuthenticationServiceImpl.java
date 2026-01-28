@@ -55,7 +55,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_USERNAME_NOT_FOUND));
+                .orElse(userRepository.findByEmail(request.getUsername())
+                        .orElseThrow(() -> new AppException(ErrorCode.USER_USERNAME_NOT_FOUND)));
+
 
         //match password
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
