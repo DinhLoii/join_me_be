@@ -17,8 +17,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +39,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         EmailVerificationToken token = EmailVerificationToken.builder()
                 .user(user)
                 .jtiHash(jtiHash)
-                .expiresAt(LocalDateTime.ofInstant(verifyToken.expiresAt(), ZoneOffset.UTC))
+                .expiresAt(verifyToken.expiresAt())
                 .build();
 
         tokenRepository.save(token);
@@ -69,7 +68,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
             throw new AppException(ErrorCode.EMAIL_VERIFICATION_TOKEN_ALREADY_USED);
         }
 
-        if (token.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (token.getExpiresAt().isBefore(Instant.now())) {
             throw new AppException(ErrorCode.EMAIL_VERIFICATION_TOKEN_EXPIRED);
         }
 
@@ -79,7 +78,7 @@ public class EmailVerificationServiceImpl implements EmailVerificationService {
         user.setEnabled(true);
         userRepository.save(user);
 
-        token.setVerifiedAt(LocalDateTime.now());
+        token.setVerifiedAt(Instant.now());
         tokenRepository.save(token);
     }
 }

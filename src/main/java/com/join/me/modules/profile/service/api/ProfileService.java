@@ -4,7 +4,6 @@ import com.join.me.common.dtos.request.PagingRequest;
 import com.join.me.common.dtos.response.PagingResponse;
 import com.join.me.modules.profile.dto.request.UpdateProfileRequest;
 import com.join.me.modules.profile.dto.response.ProfileResponse;
-import com.join.me.modules.profile.entity.Profile;
 import com.join.me.modules.user.entity.User;
 
 public interface ProfileService {

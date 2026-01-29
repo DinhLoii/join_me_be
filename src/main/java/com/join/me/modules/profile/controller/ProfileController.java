@@ -6,7 +6,6 @@ import com.join.me.common.dtos.request.PagingRequest;
 import com.join.me.common.dtos.request.SortRequest;
 import com.join.me.common.dtos.response.ApiResponse;
 import com.join.me.common.dtos.response.PagingResponse;
-import com.join.me.modules.profile.constant.profile.ProfileControllerConstants;
 import com.join.me.modules.profile.dto.request.UpdateProfileRequest;
 import com.join.me.modules.profile.dto.response.ProfileResponse;
 import com.join.me.modules.profile.service.api.ProfileService;

@@ -11,6 +11,7 @@ import com.join.me.modules.auth.dto.response.IntrospectResponse;
 import com.join.me.modules.auth.service.api.AuthenticationService;
 import com.join.me.modules.auth.service.api.EmailVerificationService;
 import com.join.me.modules.mail.service.api.MailService;
+import com.join.me.modules.profile.service.api.ProfileService;
 import com.join.me.modules.user.entity.Role;
 import com.join.me.modules.user.entity.User;
 import com.join.me.modules.user.enums.UserStatus;
@@ -43,6 +44,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -57,12 +59,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     RoleRepository roleRepository;
     EmailVerificationService emailVerificationService;
     MailService mailService;
+    ProfileService profileService;
 
     @NonFinal
     @Value(value = "${security.jwt.signer-key}")
     String SIGNER_KEY;
 
-    //authenticate
+    // authenticate
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         String login = request.getUsername();
@@ -90,15 +93,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = request.getToken();
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
-
-            //get expirationTime to verify
             Date expirationTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             boolean expirationTimeValidated = expirationTime.after(new Date());
-
-            //verify signature
             JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
             boolean verified = signedJWT.verify(verifier);
-
             return IntrospectResponse.builder()
                     .isValid(expirationTimeValidated && verified)
                     .build();
@@ -112,10 +110,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private String generateToken(User user) {
-        //header
+        // header
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
 
-        //payload
+        // payload
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
                 .issueTime(new Date())
@@ -128,10 +126,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
-        //build JsonObject
+        // build JsonObject
         JWSObject jwsObject = new JWSObject(jwsHeader, payload);
 
-        //signer
+        // signer
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
@@ -165,12 +163,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
-        }
+        Optional<User> existingUser = userRepository.findByEmail(request.getEmail())
+                .or(() -> userRepository.findByUsername(request.getUsername()));
 
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_USERNAME_ALREADY_EXISTS);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            if (user.isEnabled()) {
+                throw new AppException(ErrorCode.USER_ALREADY_EXISTS);
+            }
+            String token = emailVerificationService.createToken(user);
+            mailService.sendVerifyEmail(user.getEmail(), token);
+            return;
         }
 
         User user = User.builder()
@@ -186,6 +189,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRoles(new HashSet<>(Set.of(userRole)));
 
         User userSaved = userRepository.save(user);
+        profileService.createDefaultProfile(user);
 
         String token = emailVerificationService.createToken(userSaved);
         mailService.sendVerifyEmail(userSaved.getEmail(), token);

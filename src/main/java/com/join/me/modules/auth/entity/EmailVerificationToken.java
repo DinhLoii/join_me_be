@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -43,9 +43,9 @@ public class EmailVerificationToken extends BaseEntity {
     User user;
 
     @Column(name = AuthConstants.EXPIRES_AT, nullable = false)
-    LocalDateTime expiresAt;
+    Instant expiresAt;
 
     @Column(name = AuthConstants.VERIFIED_AT)
-    LocalDateTime verifiedAt;
+    Instant verifiedAt;
 }
 

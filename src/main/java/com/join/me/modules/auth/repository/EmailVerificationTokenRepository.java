@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +20,6 @@ public interface EmailVerificationTokenRepository extends JpaRepository<EmailVer
 
     @Modifying
     @Query("DELETE FROM EmailVerificationToken e WHERE e.expiresAt < :now")
-    void deleteAllExpired(@Param("now") LocalDateTime now);
+    void deleteAllExpired(@Param("now") Instant now);
 }
 

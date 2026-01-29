@@ -1,6 +1,5 @@
 package com.join.me.modules.profile.entity;
 
-import com.join.me.common.constants.BaseFieldConstants;
 import com.join.me.common.entity.BaseEntity;
 import com.join.me.modules.profile.constant.address.AddressConstants;
 import com.join.me.modules.profile.constant.profile.ProfileConstants;

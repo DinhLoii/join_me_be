@@ -49,7 +49,6 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     @Transactional
     public void createDefaultProfile(User user) {
-        log.info("Creating default profile for user: {}", user.getUsername());
         profileRepository.save(Profile.builder()
                 .user(user)
                 .fullName(user.getUsername())
