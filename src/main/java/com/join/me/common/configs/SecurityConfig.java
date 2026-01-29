@@ -33,7 +33,12 @@ public class SecurityConfig {
     private final String[] PUBLIC_POST_ENDPOINT = {
             "/api/v1/users",
             "/api/v1/auth/token",
-            "/api/v1/auth/introspect"
+            "/api/v1/auth/introspect",
+            "/api/v1/auth/register"
+    };
+
+    private final String[] PUBLIC_GET_ENDPOINT = {
+            "/api/v1/auth/verify-email"
     };
 
     @NonFinal
@@ -56,6 +61,7 @@ public class SecurityConfig {
                 //authorization rules
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINT).permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINT).permitAll()
                         .anyRequest().authenticated()
                 )
 

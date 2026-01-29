@@ -11,6 +11,7 @@ public class UserConstants {
     public static final String COL_PASSWORD = "password";
     public static final String COL_EMAIL = "email";
     public static final String COL_STATUS = "status";
+    public static final String COL_ENABLED = "enabled";
 
     //======= User column definition ========
     public static final String USERNAME_DEFINITION = "VARCHAR(100)";

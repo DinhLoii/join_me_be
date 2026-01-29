@@ -5,10 +5,17 @@ import com.join.me.common.enums.ErrorCode;
 import com.join.me.common.exceptions.AppException;
 import com.join.me.modules.auth.dto.request.AuthenticationRequest;
 import com.join.me.modules.auth.dto.request.IntrospectRequest;
+import com.join.me.modules.auth.dto.request.RegisterRequest;
 import com.join.me.modules.auth.dto.response.AuthenticationResponse;
 import com.join.me.modules.auth.dto.response.IntrospectResponse;
 import com.join.me.modules.auth.service.api.AuthenticationService;
+import com.join.me.modules.auth.service.api.EmailVerificationService;
+import com.join.me.modules.mail.service.api.MailService;
+import com.join.me.modules.user.entity.Role;
 import com.join.me.modules.user.entity.User;
+import com.join.me.modules.user.enums.UserStatus;
+import com.join.me.modules.user.constants.role.PredefinedRole;
+import com.join.me.modules.user.repository.RoleRepository;
 import com.join.me.modules.user.repository.UserRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -28,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
@@ -46,6 +54,9 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
+    EmailVerificationService emailVerificationService;
+    MailService mailService;
 
     @NonFinal
     @Value(value = "${security.jwt.signer-key}")
@@ -54,22 +65,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     //authenticate
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElse(userRepository.findByEmail(request.getUsername())
-                        .orElseThrow(() -> new AppException(ErrorCode.USER_USERNAME_NOT_FOUND)));
+        String login = request.getUsername();
 
+        User user = userRepository.findByUsername(login)
+                .or(() -> userRepository.findByEmail(login))
+                .orElseThrow(() -> new AppException(ErrorCode.USER_USERNAME_NOT_FOUND));
 
-        //match password
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-
-        //check for authenticate
-        if(!authenticated) {
+        if (!authenticated) {
             throw new AppException(ErrorCode.AUTH_UNAUTHENTICATED);
         }
-
-        // generate JWT token
+        if (!user.isEnabled()) {
+            throw new AppException(ErrorCode.USER_NOT_VERIFIED);
+        }
         String token = generateToken(user);
-
         return AuthenticationResponse.builder()
                 .authenticated(true)
                 .token(token)
@@ -113,21 +122,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .expirationTime(
                         Date.from(Instant.now().plus(1, ChronoUnit.HOURS)))
                 .jwtID(UUID.randomUUID().toString())
-                .claim(JwtClaimSetConstant.CLAIM_USER_ID,  user.getId())
+                .claim(JwtClaimSetConstant.CLAIM_USER_ID, user.getId())
                 .claim(JwtClaimSetConstant.CLAIM_SCOPE, buildScope(user))
                 .claim(JwtClaimSetConstant.CLAIM_PERMISSION, buildPermission(user))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 
         //build JsonObject
-        JWSObject jwsObject = new JWSObject(jwsHeader,payload);
+        JWSObject jwsObject = new JWSObject(jwsHeader, payload);
 
         //signer
         try {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
-            log.error("Cannot generate token");
             throw new AppException(ErrorCode.AUTH_GENERATION_FAIL);
         }
     }
@@ -135,7 +143,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
         boolean isEmpty = CollectionUtils.isEmpty(user.getRoles());
-        if(!isEmpty) {
+        if (!isEmpty) {
             user.getRoles().forEach(role -> stringJoiner.add(role.getRoleName()));
         }
         return stringJoiner.toString();
@@ -147,9 +155,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (!isEmpty) {
             user.getRoles().forEach(
-                    role -> role.getPermissions().forEach(permission -> permissions.add(permission.getPermissionName())));
+                    role -> role.getPermissions().forEach(
+                            permission -> permissions.add(permission.getPermissionName())));
         }
 
         return permissions;
+    }
+
+    @Override
+    @Transactional
+    public void register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_USERNAME_ALREADY_EXISTS);
+        }
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .status(UserStatus.ACTIVE)
+                .enabled(false)
+                .build();
+
+        Role userRole = roleRepository.findByRoleName(PredefinedRole.USER_ROLE)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        user.setRoles(new HashSet<>(Set.of(userRole)));
+
+        User userSaved = userRepository.save(user);
+
+        String token = emailVerificationService.createToken(userSaved);
+        mailService.sendVerifyEmail(userSaved.getEmail(), token);
     }
 }

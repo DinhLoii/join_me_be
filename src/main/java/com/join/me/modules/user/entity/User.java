@@ -23,7 +23,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -61,6 +60,10 @@ public class User extends BaseEntity {
         @Enumerated(EnumType.STRING)
         @Column(name = UserConstants.COL_STATUS, nullable = false)
         UserStatus status;
+
+        @Builder.Default
+        @Column(name = UserConstants.COL_ENABLED, nullable = false)
+        boolean enabled = false;
 
         @ManyToMany(fetch = FetchType.LAZY)
         @JoinTable(name = "user_roles",

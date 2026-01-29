@@ -18,9 +18,15 @@ public enum ErrorCode {
     AUTH_MISSING_TOKEN("AUTH_1001", "Client missing token", HttpStatus.BAD_REQUEST),
     AUTH_GENERATION_FAIL("AUTH_1002", "Generation JWT fail", HttpStatus.INTERNAL_SERVER_ERROR),
     JWT_CLAIM_MISSING("AUTH_1003", "JWT claim is missing or invalid", HttpStatus.UNAUTHORIZED),
+    USER_NOT_VERIFIED("AUTH_1004", "User email not verified", HttpStatus.FORBIDDEN),
+    EMAIL_ALREADY_EXISTS("AUTH_1005", "Email already exists", HttpStatus.BAD_REQUEST),
+    EMAIL_VERIFICATION_TOKEN_INVALID("AUTH_1006", "Email verification token is invalid", HttpStatus.BAD_REQUEST),
+    EMAIL_VERIFICATION_TOKEN_EXPIRED("AUTH_1007", "Email verification token has expired", HttpStatus.BAD_REQUEST),
+    EMAIL_VERIFICATION_TOKEN_ALREADY_USED("AUTH_1008", "Email verification token already used", HttpStatus.BAD_REQUEST),
 
     // ==== USER ERRORS ====
     USER_USERNAME_NOT_FOUND("USER_1000", "User not found with given username", HttpStatus.NOT_FOUND),
+    USER_USERNAME_ALREADY_EXISTS("USER_1001", "Username already exists", HttpStatus.BAD_REQUEST),
 
     // ==== ROLE ERRORS ====
     ROLE_NOT_FOUND("ROLE_1000", "Role not found", HttpStatus.NOT_FOUND),

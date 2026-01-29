@@ -14,17 +14,17 @@ import java.util.Objects;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException{
-    @ExceptionHandler(value = RuntimeException.class)
-    public ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException exception){
-        ApiResponse<Object> response = ApiResponse.builder()
-                .success(ApiConstant.FAILURE)
-                .errorMessage(ErrorMessage.builder()
-                        .errorCode(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getCode())
-                        .message(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getMessage())
-                        .build())
-                .build();
-        return ResponseEntity.ok(response);
-    }
+//    @ExceptionHandler(value = RuntimeException.class)
+//    public ResponseEntity<ApiResponse<Object>> handlingRuntimeException(RuntimeException exception){
+//        ApiResponse<Object> response = ApiResponse.builder()
+//                .success(ApiConstant.FAILURE)
+//                .errorMessage(ErrorMessage.builder()
+//                        .errorCode(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getCode())
+//                        .message(ErrorCode.SERVER_UNCATEGORIZED_EXCEPTION.getMessage())
+//                        .build())
+//                .build();
+//        return ResponseEntity.ok(response);
+//    }
 
     @ExceptionHandler(value = AppException.class)
     public ResponseEntity<ApiResponse<Object>> handlingAppException(AppException exception){
