@@ -2,6 +2,8 @@ package com.join.me.modules.room.repository;
 
 import com.join.me.modules.room.entity.RoomJoinRequest;
 import com.join.me.modules.room.enums.RequestStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,11 @@ import java.util.Optional;
 public interface RoomJoinRequestRepository extends JpaRepository<RoomJoinRequest, String> {
     List<RoomJoinRequest> findByRoomId(String roomId);
 
+    Page<RoomJoinRequest> findByRoomId(String roomId, Pageable pageable);
+
     List<RoomJoinRequest> findByUserId(String userId);
+
+    Page<RoomJoinRequest> findByUserId(String userId, Pageable pageable);
 
     Optional<RoomJoinRequest> findByRoomIdAndUserId(String roomId, String userId);
 

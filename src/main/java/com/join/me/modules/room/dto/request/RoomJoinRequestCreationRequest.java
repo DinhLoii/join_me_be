@@ -17,7 +17,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoomJoinRequestCreationRequest {
-
     @NotBlank(message = RoomErrorCodeConstants.REQUEST_ROOM_ID_NOT_BLANK)
     String roomId;
 }

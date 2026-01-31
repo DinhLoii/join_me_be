@@ -66,9 +66,12 @@ public enum ErrorCode {
     ROOM_ACCESS_DENIED("ROOM_1002", "Access denied to room", HttpStatus.FORBIDDEN),
     ROOM_FULL("ROOM_1003", "Room is full", HttpStatus.BAD_REQUEST),
     ROOM_EXPIRED("ROOM_1004", "Room has expired", HttpStatus.BAD_REQUEST),
+    ROOM_UPDATE_NOT_ALLOWED("ROOM_1005", "Room cannot be updated when it has members", HttpStatus.BAD_REQUEST),
+    ROOM_DELETE_NOT_ALLOWED("ROOM_1006", "Room cannot be deleted when it has members", HttpStatus.BAD_REQUEST),
 
     // ==== CATEGORY ERRORS ====
     CATEGORY_NOT_FOUND("CATEGORY_1000", "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_NAME_EXISTED("CATEGORY_1001", "Category name already exists", HttpStatus.BAD_REQUEST),
 
     // ==== REQUEST ERRORS ====
     REQUEST_NOT_FOUND("REQUEST_1000", "Room join request not found", HttpStatus.NOT_FOUND),

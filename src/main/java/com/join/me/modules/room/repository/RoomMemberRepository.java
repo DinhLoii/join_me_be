@@ -2,6 +2,8 @@ package com.join.me.modules.room.repository;
 
 import com.join.me.modules.room.entity.RoomMember;
 import com.join.me.modules.room.enums.MemberStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +14,8 @@ import java.util.Optional;
 @Repository
 public interface RoomMemberRepository extends JpaRepository<RoomMember, String> {
     List<RoomMember> findByRoomId(String roomId);
+
+    Page<RoomMember> findByRoomId(String roomId, Pageable pageable);
 
     List<RoomMember> findByUserId(String userId);
 

@@ -73,7 +73,7 @@ public final class RoomConstants {
     public static final int DESCRIPTION_MAX = 5000;
     public static final int MAX_SLOT_MIN = 1;
     public static final int MAX_SLOT_MAX = 1000;
-    public static final int COVER_IMG_MAX_LENGTH = 500;
+    public static final int COVER_IMG_MAX_LENGTH = 1000;
     public static final int MEETING_POINT_MAX_LENGTH = 255;
     public static final int NAME_MIN = 1;
     public static final int NAME_MAX = 100;
