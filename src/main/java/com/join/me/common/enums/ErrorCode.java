@@ -59,6 +59,26 @@ public enum ErrorCode {
     WEBSOCKET_SESSION_NOT_FOUND("WEBSOCKET_1004", "WebSocket session not found", HttpStatus.NOT_FOUND),
     WEBSOCKET_INVALID_TOKEN("WEBSOCKET_1005", "Invalid WebSocket authentication token", HttpStatus.UNAUTHORIZED),
     WEBSOCKET_MESSAGE_SEND_FAILED("WEBSOCKET_1006", "Failed to send WebSocket message", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // ==== ROOM ERRORS ====
+    ROOM_NOT_FOUND("ROOM_1000", "Room not found", HttpStatus.NOT_FOUND),
+    ROOM_ALREADY_EXISTS("ROOM_1001", "Room already exists", HttpStatus.BAD_REQUEST),
+    ROOM_ACCESS_DENIED("ROOM_1002", "Access denied to room", HttpStatus.FORBIDDEN),
+    ROOM_FULL("ROOM_1003", "Room is full", HttpStatus.BAD_REQUEST),
+    ROOM_EXPIRED("ROOM_1004", "Room has expired", HttpStatus.BAD_REQUEST),
+
+    // ==== CATEGORY ERRORS ====
+    CATEGORY_NOT_FOUND("CATEGORY_1000", "Category not found", HttpStatus.NOT_FOUND),
+
+    // ==== REQUEST ERRORS ====
+    REQUEST_NOT_FOUND("REQUEST_1000", "Room join request not found", HttpStatus.NOT_FOUND),
+    REQUEST_ALREADY_EXISTS("REQUEST_1001", "Room join request already exists", HttpStatus.BAD_REQUEST),
+    REQUEST_ALREADY_PROCESSED("REQUEST_1002", "Room join request already processed", HttpStatus.BAD_REQUEST),
+
+    // ==== MEMBER ERRORS ====
+    MEMBER_NOT_FOUND("MEMBER_1000", "Room member not found", HttpStatus.NOT_FOUND),
+    MEMBER_ALREADY_EXISTS("MEMBER_1001", "Room member already exists", HttpStatus.BAD_REQUEST),
+    MEMBER_IN_COOLDOWN("MEMBER_1002", "Member is in cooldown period", HttpStatus.BAD_REQUEST),
     ;
 
     String code;
